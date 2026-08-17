@@ -50,7 +50,8 @@ async function handleRequest(request, env = {}) {
 	if (path.toLowerCase() === '/ads.txt') {
 		return new Response(config.ADS, {
 			headers: {
-				'content-type': 'text/plain;charset=UTF-8'
+				'content-type': 'text/plain;charset=UTF-8',
+				'cache-control': 'public, max-age=86400'
 			}
 		});
 	}
@@ -79,7 +80,10 @@ async function handleRequest(request, env = {}) {
 	);
 
 	return new Response(html, {
-		headers: { 'content-type': 'text/html;charset=UTF-8' }
+		headers: {
+			'content-type': 'text/html;charset=UTF-8',
+			'cache-control': 'no-cache'
+		}
 	});
 }
 
@@ -119,7 +123,20 @@ function toList(value) {
 	if (text.charAt(0) === ',') text = text.slice(1);
 	if (text.charAt(text.length - 1) === ',') text = text.slice(0, text.length - 1);
 
-	return text ? text.split(',').filter(Boolean) : [];
+	return text ? text.split(',').map(s => s.trim()).filter(Boolean) : [];
+}
+
+function escapeHtml(str) {
+	return String(str)
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#39;');
+}
+
+function safeJsonStringify(value) {
+	return JSON.stringify(value).replace(/</g, '\\u003c').replace(/>/g, '\\u003e');
 }
 
 function generateHtml(urls, img, icon, avatar, beian, title, siteName, jumpDelay, path, params) {
@@ -131,7 +148,7 @@ function generateHtml(urls, img, icon, avatar, beian, title, siteName, jumpDelay
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="color-scheme" content="light dark">
-	<title>${siteName} - ${title}</title>
+	<title>${escapeHtml(siteName)} - ${escapeHtml(title)}</title>
 	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 	<style>
 		:root {
@@ -636,11 +653,11 @@ function generateHtml(urls, img, icon, avatar, beian, title, siteName, jumpDelay
 		<div class="topbar">
 			<div class="logo-wrapper">
 				<div class="status-ring"></div>
-				<img class="logo" src="${avatar}" alt="Logo">
+				<img class="logo" src="${escapeHtml(avatar)}" alt="Logo">
 			</div>
 			<div class="header-copy">
-				<div class="eyebrow">${siteName}</div>
-				<h1>${title}</h1>
+				<div class="eyebrow">${escapeHtml(siteName)}</div>
+				<h1>${escapeHtml(title)}</h1>
 				<div class="subtitle">正在为您寻找最佳线路...</div>
 			</div>
 			<div class="summary-badge">
@@ -657,9 +674,9 @@ function generateHtml(urls, img, icon, avatar, beian, title, siteName, jumpDelay
 	</div>
 
 	<script>
-		const urls = ${JSON.stringify(urls)};
-		const currentPath = ${JSON.stringify(path)};
-		const currentParams = ${JSON.stringify(params)};
+		const urls = ${safeJsonStringify(urls)};
+		const currentPath = ${safeJsonStringify(path)};
+		const currentParams = ${safeJsonStringify(params)};
 		const jumpDelay = ${JSON.stringify(Number(jumpDelay) || 0)};
 		const list = document.getElementById('urlList');
 		const container = document.querySelector('.container');
@@ -693,10 +710,11 @@ function generateHtml(urls, img, icon, avatar, beian, title, siteName, jumpDelay
 			li.id = \`item-\${index}\`;
 			li.innerHTML = \`
 				<span class="url-info">
-					<span class="url-name">\${routeName}</span>
+					<span class="url-name"></span>
 				</span>
 				<span class="url-latency latency-checking" id="latency-\${index}">测速中</span>
 			\`;
+			li.querySelector('.url-name').textContent = routeName;
 			list.appendChild(li);
 		});
 
@@ -801,7 +819,7 @@ function generateHtml(urls, img, icon, avatar, beian, title, siteName, jumpDelay
 					document.querySelector('.summary-label').textContent = '命中线路';
 
 					setTimeout(() => {
-						window.location.href = item.testUrl + currentPath + currentParams;
+						window.location.href = new URL(currentPath + currentParams, item.testUrl).href;
 					}, jumpDelay);
 				}
 
