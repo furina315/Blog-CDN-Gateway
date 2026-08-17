@@ -1,29 +1,34 @@
 const DEFAULT_CONFIG = {
 	// CDN 测速地址，格式为 "访问地址#显示名称"。
 	URLS: [
-		'https://blog.cmliussss.com#Ali CDN',
-		'https://fastly.blog.cmliussss.com#Fastly CDN',
-		'https://vercel.blog.cmliussss.com#Vercel CDN',
-		'https://netlify.blog.cmliussss.com#Netlify CDN'
+		'https://blog.shiosora.top#EdgeOne CDN',
+		'https://cf.blog.shiosora.top#Cloudflare CDN',
+		'https://vercel.blog.shiosora.top#Vercel CDN',
+		'https://netlify.blog.shiosora.top#Netlify CDN'
 	],
 	// /ads.txt 返回内容。
 	ADS: 'google.com, pub-9350003957494520, DIRECT, f08c47fec0942fa0',
 	// 网站图标，同时用于响应 /favicon.ico。
-	ICO: 'https://raw.cmliussss.com/favicon.ico',
+	ICO: 'https://blog.shiosora.top/favicon.ico',
 	// 页面中间显示的头像或 Logo。
-	PNG: 'https://raw.cmliussss.com/IMG_0038.png',
+	PNG: 'https://imgcdn.shiosora.top/avatar/avatar.webp',
 	// 背景图片，填写多张时会随机展示一张；留空则使用内置默认背景。
-	IMG: [
-		//'https://raw.cmliussss.com/keqing1080p.jpg'
+	IMG: 
+	[
+		'https://imgcdn.shiosora.top/pic/1.webp',
+		'https://imgcdn.shiosora.top/pic/2.webp',
+		'https://imgcdn.shiosora.top/pic/3.webp',
+		'https://imgcdn.shiosora.top/pic/4.webp',
+    	'https://imgcdn.shiosora.top/pic/5.webp'
 	],
 	// 命中首个返回 200 的线路后，等待多少毫秒再跳转。
 	JUMP_DELAY: 999,
 	// 页脚内容，可以写备案号、统计代码或项目链接。
 	BEIAN: `由 <a href="https://github.com/cmliu/Blog-CDN-Gateway" target="_blank" rel="noopener noreferrer">Blog-CDN-Gateway</a> 强力驱动`,
 	// 页面主标题。
-	TITLE: 'BlogCDN 智能路由',
+	TITLE: 'Blog CDN Gateway',
 	// 浏览器标题栏中显示的站点名称。
-	NAME: 'CMLiussss Blog'
+	NAME: 'Hoshino ShioのBlog'
 };
 
 export async function onRequest(context) {
