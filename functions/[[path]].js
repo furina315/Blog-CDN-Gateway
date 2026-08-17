@@ -1,7 +1,7 @@
 const DEFAULT_CONFIG = {
 	// CDN 测速地址，格式为 "访问地址#显示名称"。
 	URLS: [
-		'https://blog.shiosora.top#EdgeOne CDN',
+		'https://eo.blog.shiosora.top#EdgeOne CDN',
 		'https://cf.blog.shiosora.top#Cloudflare CDN',
 		'https://vercel.blog.shiosora.top#Vercel CDN',
 		'https://netlify.blog.shiosora.top#Netlify CDN'
@@ -31,6 +31,12 @@ const DEFAULT_CONFIG = {
 	NAME: 'Hoshino ShioのBlog'
 };
 
+// 爬虫 / 分享抓取 bot 的 UA 特征，命中时跳过前端测速，直接服务端 302 到固定内容域名
+const BOT_UA_REGEX = /bot|crawler|spider|googlebot|bingbot|baiduspider|facebookexternalhit|twitterbot|slackbot|discordbot|telegrambot|whatsapp|linkedinbot|wechat|micromessenger/i;
+
+// 爬虫/预览命中时固定跳转的内容域名（选你认为最稳定的那条线路）
+const CANONICAL_ORIGIN = 'https://eo.blog.shiosora.top';
+
 export async function onRequest(context) {
 	return handleRequest(context.request, context.env || {});
 }
@@ -46,6 +52,12 @@ async function handleRequest(request, env = {}) {
 	const url = new URL(request.url);
 	const path = url.pathname;
 	const params = url.search;
+
+	// 爬虫/分享抓取 bot：服务端直接 302 到固定内容域名，不跑前端测速逻辑
+	const ua = request.headers.get('user-agent') || '';
+	if (BOT_UA_REGEX.test(ua)) {
+		return Response.redirect(CANONICAL_ORIGIN + path + params, 302);
+	}
 
 	if (path.toLowerCase() === '/ads.txt') {
 		return new Response(config.ADS, {
