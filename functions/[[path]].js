@@ -35,7 +35,7 @@ const DEFAULT_CONFIG = {
 const BOT_UA_REGEX = /bot|crawler|spider|googlebot|bingbot|baiduspider|facebookexternalhit|twitterbot|slackbot|discordbot|telegrambot|whatsapp|linkedinbot|wechat|micromessenger/i;
 
 // 爬虫/预览命中时固定跳转的内容域名（选你认为最稳定的那条线路）
-const CANONICAL_ORIGIN = 'https://eo.blog.shiosora.top';
+const CANONICAL_ORIGIN = 'https://blog.shiosora.top';
 
 export async function onRequest(context) {
 	return handleRequest(context.request, context.env || {});
