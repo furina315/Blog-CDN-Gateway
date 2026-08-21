@@ -4,7 +4,7 @@ const DEFAULT_CONFIG = {
 		'https://eo.blog.shiosora.top#EdgeOne CDN',
 		'https://cf.blog.shiosora.top#Cloudflare CDN',
 		'https://vercel.blog.shiosora.top#Vercel CDN',
-		'https://netlify.blog.shiosora.top#Netlify CDN'
+		'https://blog.shiosora.top#Netlify CDN'
 	],
 	// /ads.txt 返回内容。
 	ADS: 'google.com, pub-9350003957494520, DIRECT, f08c47fec0942fa0',
